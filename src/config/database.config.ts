@@ -14,4 +14,10 @@ export const setDatabaseConfig = async (
   autoLoadEntities: configService.get<boolean>('DB_AUTOLOAD'),
   synchronize: configService.get<boolean>('DB_SYNCH'),
   logging: configService.get<boolean>('DB_LOG'),
+  ssl: true,
+  extra: {
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  },
 });
