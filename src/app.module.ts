@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from './modules/user/user.module';
+import { UserModule } from './domain/user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { setDatabaseConfig } from './config/database.config';
+import { setDatabaseConfig } from './infra/database.config';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { setDatabaseConfig } from './config/database.config';
       inject: [ConfigService],
       useFactory: setDatabaseConfig,
     }),
-    UserModule],
+    UserModule,
+    AuthModule],
   controllers: [],
   providers: [],
 })
