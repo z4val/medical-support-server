@@ -11,7 +11,10 @@ export class User {
   @Column({ unique: true, nullable: false })
   email: string;
 
-  @Column()
+  @Column({ type: 'enum', enum: ['local', 'google'], default: 'local' })
+  provider: string;
+
+  @Column({ default: null })
   password: string;
 
   @CreateDateColumn()

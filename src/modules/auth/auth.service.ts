@@ -11,7 +11,6 @@ import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { User } from 'src/domain/user/entities/user.entity';
-import { stat } from 'fs';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +20,9 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
+  async generateJwtToken(payload: any): Promise<string> {
+    return await this.jwtService.signAsync(payload);
+  }
   private async validateUser(
     email: string,
     pass: string,
@@ -50,6 +52,25 @@ export class AuthService {
         message: 'An error occurred during user validation',
       });
     }
+  }
+
+  async validateOAuthUser(userData: Partial<User>) {
+    const { email, username, provider } = userData;
+    let user = await this.userService.findByEmail(email!);
+
+    if(!user) {
+      const dto = {
+        username: username!,
+        email: email!,
+        provider: provider!,
+      }
+      user = await this.userService.create(dto);
+    } else if (user.provider !== provider) {
+      user.provider = provider!;
+      await this.userService.update(user.id, { provider: provider! });
+      user = await this.userService.findByEmail(email!);
+    }
+    return user;
   }
 
   async register(userData: RegisterDto) {
