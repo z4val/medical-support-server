@@ -4,6 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { setDatabaseConfig } from './infra/database.config';
 import { AuthModule } from './modules/auth/auth.module';
+import { PatientModule } from './domain/patient/patient.module';
+import { IndicatorsModule } from './domain/indicators/indicators.module';
 
 @Module({
   imports: [
@@ -14,7 +16,9 @@ import { AuthModule } from './modules/auth/auth.module';
       useFactory: setDatabaseConfig,
     }),
     UserModule,
-    AuthModule],
+    AuthModule,
+    PatientModule,
+    IndicatorsModule],
   controllers: [],
   providers: [],
 })

@@ -17,6 +17,9 @@ export class User {
   @Column({ default: null })
   password: string;
 
+  @Column({ default: null })
+  avatar: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
