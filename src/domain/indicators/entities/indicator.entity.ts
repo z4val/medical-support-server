@@ -1,5 +1,7 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { InquiryIndicator } from 'src/modules/inquiries/entities/inquiry-indicator.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
 export class Indicator {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -14,8 +16,11 @@ export class Indicator {
   unit: string;
 
   @Column()
-  minRegularValue: string;
+  minRegularValue: number;
 
   @Column()
-  maxRegularValue: string;
+  maxRegularValue: number;
+
+  @OneToMany(() => InquiryIndicator, (inquiryIndicator) => inquiryIndicator.indicator)
+  inquiryIndicators: InquiryIndicator[];
 }

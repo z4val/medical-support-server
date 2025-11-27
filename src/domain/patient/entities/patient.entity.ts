@@ -1,5 +1,7 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Inquiry } from 'src/modules/inquiries/entities/inquiry.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
 export class Patient {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -24,4 +26,7 @@ export class Patient {
 
   @Column()
   avatar: string;
+
+  @OneToMany(() => Inquiry, (inquiry) => inquiry.patient)
+  inquiries: Inquiry[];
 }

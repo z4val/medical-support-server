@@ -6,6 +6,7 @@ import { setDatabaseConfig } from './infra/database.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { PatientModule } from './domain/patient/patient.module';
 import { IndicatorsModule } from './domain/indicators/indicators.module';
+import { InquiriesModule } from './modules/inquiries/inquiries.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { IndicatorsModule } from './domain/indicators/indicators.module';
     UserModule,
     AuthModule,
     PatientModule,
-    IndicatorsModule],
+    IndicatorsModule,
+    InquiriesModule],
   controllers: [],
   providers: [],
 })
