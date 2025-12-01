@@ -2,10 +2,13 @@ import { Patient } from 'src/domain/patient/entities/patient.entity';
 import { User } from 'src/domain/user/entities/user.entity';
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { InquiryIndicator } from './inquiry-indicator.entity';
 
@@ -26,6 +29,14 @@ export class Inquiry {
   @Column()
   feedback: string;
 
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
   // Relationships (User and Patient)
 
   @ManyToOne(() => User, (user) => user.inquiries)
