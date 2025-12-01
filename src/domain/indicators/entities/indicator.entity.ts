@@ -21,6 +21,9 @@ export class Indicator {
   @Column()
   maxRegularValue: number;
 
-  @OneToMany(() => InquiryIndicator, (inquiryIndicator) => inquiryIndicator.indicator)
+  @OneToMany(
+    () => InquiryIndicator,
+    (inquiryIndicator) => inquiryIndicator.indicator,
+  )
   inquiryIndicators: InquiryIndicator[];
 }

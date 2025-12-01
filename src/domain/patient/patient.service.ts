@@ -3,11 +3,14 @@ import { CreatePatientDto } from './dto/create-patient.dto';
 import { UpdatePatientDto } from './dto/update-patient.dto';
 import { Repository } from 'typeorm';
 import { Patient } from './entities/patient.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class PatientService {
-
-  constructor(private readonly repository: Repository<Patient>){}
+  constructor(
+    @InjectRepository(Patient)
+    private readonly repository: Repository<Patient>,
+  ) {}
 
   async create(createPatientDto: CreatePatientDto) {
     return this.repository.save(createPatientDto);
@@ -18,7 +21,7 @@ export class PatientService {
   }
 
   async filterBy(criteria: Partial<Patient>) {
-    return this.repository.find({ where: criteria});
+    return this.repository.find({ where: criteria });
   }
 
   async findOne(id: string) {

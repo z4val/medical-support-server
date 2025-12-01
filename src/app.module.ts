@@ -10,7 +10,7 @@ import { InquiriesModule } from './modules/inquiries/inquiries.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true}),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -20,7 +20,8 @@ import { InquiriesModule } from './modules/inquiries/inquiries.module';
     AuthModule,
     PatientModule,
     IndicatorsModule,
-    InquiriesModule],
+    InquiriesModule,
+  ],
   controllers: [],
   providers: [],
 })

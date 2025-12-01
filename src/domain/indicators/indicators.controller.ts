@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { IndicatorsService } from './indicators.service';
 import { CreateIndicatorDto } from './dto/create-indicator.dto';
 import { UpdateIndicatorDto } from './dto/update-indicator.dto';
@@ -23,7 +31,10 @@ export class IndicatorsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateIndicatorDto: UpdateIndicatorDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateIndicatorDto: UpdateIndicatorDto,
+  ) {
     return this.indicatorsService.update(+id, updateIndicatorDto);
   }
 

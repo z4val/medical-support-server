@@ -58,12 +58,12 @@ export class AuthService {
     const { email, username, provider } = userData;
     let user = await this.userService.findByEmail(email!);
 
-    if(!user) {
+    if (!user) {
       const dto = {
         username: username!,
         email: email!,
         provider: provider!,
-      }
+      };
       user = await this.userService.create(dto);
     } else if (user.provider !== provider) {
       user.provider = provider!;
