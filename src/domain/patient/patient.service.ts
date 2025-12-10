@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePatientDto } from './dto/create-patient.dto';
 import { UpdatePatientDto } from './dto/update-patient.dto';
 import { Repository } from 'typeorm';
@@ -13,7 +13,8 @@ export class PatientService {
   ) {}
 
   async create(createPatientDto: CreatePatientDto) {
-    return this.repository.save(createPatientDto);
+    const patient = this.repository.create(createPatientDto);
+    return this.repository.save(patient);
   }
 
   async findAll() {
@@ -25,14 +26,30 @@ export class PatientService {
   }
 
   async findOne(id: string) {
-    return this.repository.findOne({ where: { id } });
+    const patient = await this.repository.findOne({ where: { id } });
+
+    if (!patient) {
+      throw new NotFoundException('Patient not found');
+    }
+
+    return patient;
   }
 
   async update(id: string, updatePatientDto: UpdatePatientDto) {
-    return this.repository.update(id, updatePatientDto);
+    const patient = await this.repository.preload({
+      id,
+      ...updatePatientDto,
+    });
+
+    if (!patient) {
+      throw new NotFoundException('Patient not found');
+    }
+
+    return this.repository.save(patient);
   }
 
   async remove(id: string) {
-    return this.repository.softDelete(id);
+    const patient = await this.findOne(id);
+    return this.repository.softRemove(patient);
   }
 }

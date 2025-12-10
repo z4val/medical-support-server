@@ -1,5 +1,13 @@
 import { Inquiry } from 'src/modules/inquiries/entities/inquiry.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Patient {
@@ -15,17 +23,26 @@ export class Patient {
   @Column({ unique: true, nullable: false })
   dni: string;
 
-  @Column()
+  @Column({ type: 'date' })
   birthdate: Date;
 
-  @Column()
+  @Column({ type: 'boolean' })
   gender: boolean;
 
   @Column()
   phone: string;
 
-  @Column()
+  @Column({ nullable: true })
   avatar: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 
   @OneToMany(() => Inquiry, (inquiry) => inquiry.patient)
   inquiries: Inquiry[];

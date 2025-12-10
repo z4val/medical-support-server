@@ -10,9 +10,13 @@ export class InquiryIndicator {
   @Column()
   value: number;
 
-  @ManyToOne(() => Inquiry, (inquiry) => inquiry.inquiryIndicators)
+  @ManyToOne(() => Inquiry, (inquiry) => inquiry.inquiryIndicators, {
+    onDelete: 'CASCADE',
+  })
   inquiry: Inquiry;
 
-  @ManyToOne(() => Indicator, (indicator) => indicator.inquiryIndicators)
+  @ManyToOne(() => Indicator, (indicator) => indicator.inquiryIndicators, {
+    eager: true,
+  })
   indicator: Indicator;
 }
