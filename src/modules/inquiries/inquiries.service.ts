@@ -201,12 +201,74 @@ export class InquiriesService {
     return this.inquiryRepo.softRemove(inquiry);
   }
 
+  async getCountByMonth(): Promise<{
+    total: number;
+    previous: number;
+    changePercent: number;
+  }> {
+    const now = new Date();
+
+    // inicio del mes actual y del siguiente (limites [startCurrent, startNext) )
+    const startCurrent = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startNext = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+    // inicio del mes anterior
+    const startPrevious = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+    const historicTotal = await this.inquiryRepo.count();
+
+    // Conteo mes actual (excluye soft-deleted explícitamente)
+    const totalCurrent = await this.inquiryRepo
+      .createQueryBuilder('inquiry')
+      .where(
+        'inquiry.createdAt >= :startCurrent AND inquiry.createdAt < :startNext',
+        {
+          startCurrent: startCurrent.toISOString(),
+          startNext: startNext.toISOString(),
+        },
+      )
+      .andWhere('inquiry.deletedAt IS NULL')
+      .getCount();
+
+    // Conteo mes anterior
+    const totalPrevious = await this.inquiryRepo
+      .createQueryBuilder('inquiry')
+      .where(
+        'inquiry.createdAt >= :startPrevious AND inquiry.createdAt < :startCurrent',
+        {
+          startPrevious: startPrevious.toISOString(),
+          startCurrent: startCurrent.toISOString(),
+        },
+      )
+      .andWhere('inquiry.deletedAt IS NULL')
+      .getCount();
+
+    // Calcular cambio porcentual
+    let changePercent = 0;
+    if (totalPrevious === 0) {
+      changePercent = totalCurrent === 0 ? 0 : 100;
+    } else {
+      changePercent = ((totalCurrent - totalPrevious) / totalPrevious) * 100;
+    }
+
+    // opcional: redondear a 2 decimales
+    changePercent = Math.round(changePercent * 100) / 100;
+
+    return {
+      total: totalCurrent,
+      previous: totalPrevious,
+      changePercent,
+    };
+  }
+
   // Esquematización para la futura integración con IA (OpenAI / DeepSeek).
   // Recibirá indicadores y devolverá prompt y respuesta para guardar en la consulta.
-  async buildAiSecondOpinionPayload(indicators: {
-    indicatorId: string;
-    value: number;
-  }[]) {
+  async buildAiSecondOpinionPayload(
+    indicators: {
+      indicatorId: string;
+      value: number;
+    }[],
+  ) {
     return {
       prompt: 'TODO: construir prompt con los indicadores',
       response: 'TODO: respuesta del modelo IA',
