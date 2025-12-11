@@ -13,6 +13,7 @@ import { LoginDto } from './dto/login.dto';
 import { GoogleOauthGuard } from './guards/google-oauth.guard';
 import type { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { JwtGuard } from './guards/jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -49,7 +50,13 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     return res.redirect(
-      `${this.configService.get<string>('FRONTEND_URL')!}/auth/success`,
+      `${this.configService.get<string>('FRONTEND_URL')!}/google/success`,
     );
+  }
+
+  @Get('me')
+  @UseGuards(JwtGuard)
+  async me(@Req() req) {
+    return req.user;
   }
 }
