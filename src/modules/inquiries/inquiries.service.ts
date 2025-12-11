@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, Between } from 'typeorm';
 import { Inquiry } from './entities/inquiry.entity';
 import { InquiryIndicator } from './entities/inquiry-indicator.entity';
 import { CreateInquiryDto } from './dto/create-inquiry.dto';
@@ -259,6 +259,25 @@ export class InquiriesService {
       previous: totalPrevious,
       changePercent,
     };
+  }
+
+  async getMonthlyInquiryResume(year: number) {
+    const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+    const monthlyResume: { month: string; total: number }[] = [];
+
+    for (let month = 0; month < 12; month++) {
+      const count = await this.inquiryRepo.count({
+        where: {
+          createdAt: Between(
+            new Date(year, month, 1),
+            new Date(year, month + 1, 1)
+          )
+        }
+      })
+      monthlyResume.push({ month: months[month], total: count });
+    }
+    return monthlyResume;
   }
 
   // Esquematización para la futura integración con IA (OpenAI / DeepSeek).

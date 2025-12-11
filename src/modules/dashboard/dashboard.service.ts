@@ -38,4 +38,8 @@ export class DashboardService {
   async inquiryResumeStats() {
     return this.inquiriesService.getCountByMonth();
   }
+
+  async inquiryMonthlyChart(year: number) {
+    return this.inquiriesService.getMonthlyInquiryResume(year);
+  }
 }
