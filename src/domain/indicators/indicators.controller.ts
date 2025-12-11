@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { IndicatorsService } from './indicators.service';
 import { CreateIndicatorDto } from './dto/create-indicator.dto';
@@ -21,13 +22,13 @@ export class IndicatorsController {
   }
 
   @Get()
-  findAll() {
-    return this.indicatorsService.findAll();
+  findAll(@Query('q') q?: string) {
+    return this.indicatorsService.findAll(q);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.indicatorsService.findOne(+id);
+    return this.indicatorsService.findOne(id);
   }
 
   @Patch(':id')
@@ -35,11 +36,11 @@ export class IndicatorsController {
     @Param('id') id: string,
     @Body() updateIndicatorDto: UpdateIndicatorDto,
   ) {
-    return this.indicatorsService.update(+id, updateIndicatorDto);
+    return this.indicatorsService.update(id, updateIndicatorDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.indicatorsService.remove(+id);
+    return this.indicatorsService.remove(id);
   }
 }
