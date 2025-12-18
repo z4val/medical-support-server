@@ -8,6 +8,7 @@ import { PatientModule } from './domain/patient/patient.module';
 import { IndicatorsModule } from './domain/indicators/indicators.module';
 import { InquiriesModule } from './modules/inquiries/inquiries.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { AiModule } from './modules/ai/ai.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     IndicatorsModule,
     InquiriesModule,
     DashboardModule,
+    AiModule,
   ],
   controllers: [],
   providers: [],
