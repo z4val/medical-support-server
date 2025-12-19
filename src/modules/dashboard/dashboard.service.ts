@@ -42,4 +42,8 @@ export class DashboardService {
   async inquiryMonthlyChart(year: number) {
     return this.inquiriesService.getMonthlyInquiryResume(year);
   }
+
+  async AiMonthlyChart(year: number) {
+    return this.inquiriesService.getMonthlyAIResume(year);
+  }
 }

@@ -280,6 +280,36 @@ export class InquiriesService {
     return monthlyResume;
   }
 
+  async getMonthlyAIResume(year: number) {
+    const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+    const aiResume: { month: string; gpt: number, deepseek: number }[] = [];
+
+    for (let month = 0; month < 12; month++) {
+      const GPTcount = await this.inquiryRepo.count({
+        where: {
+          createdAt: Between(
+            new Date(year, month, 1),
+            new Date(year, month + 1, 1)
+          ),
+          type_diagnosis: 'chatgpt'
+        }
+      });
+
+      const DeepSeekcount = await this.inquiryRepo.count({
+        where: {
+          createdAt: Between(
+            new Date(year, month, 1),
+            new Date(year, month + 1, 1)
+          ),
+          type_diagnosis: 'deepseek'
+        }
+      });
+      aiResume.push({ month: months[month], gpt: GPTcount, deepseek: DeepSeekcount });
+    }
+    return aiResume;
+  }
+
   // Esquematización para la futura integración con IA (OpenAI / DeepSeek).
   // Recibirá indicadores y devolverá prompt y respuesta para guardar en la consulta.
   async buildAiSecondOpinionPayload(

@@ -24,4 +24,9 @@ export class DashboardController {
   async getMonthlyInquiryChart(@Query('year') year: number) {
     return this.dashboardService.inquiryMonthlyChart(year);
   }
+  
+  @Get('monthly-ai-chart')
+  async getMonthlyAIChart(@Query('year') year: number) {
+    return this.dashboardService.AiMonthlyChart(year);
+  }
 }

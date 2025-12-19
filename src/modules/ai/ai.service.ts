@@ -40,7 +40,7 @@ export class AiService {
     return {
       model: model || 'openai/gpt-oss-120b:free',
       diagnosis: diagnosis.content,
-      confidence: `${Math.floor(Math.random() * 21) + 80}%`,
+      confidence: Math.floor(Math.random() * 21) + 80,
       prompt: prompt || '',
     };
   }
