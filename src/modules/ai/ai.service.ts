@@ -32,16 +32,16 @@ export class AiService {
 
   async generateMedicalPrompt() {}
 
-  async getResponse(model?: string) {
-    const diagnosis = await this.getModelResponse(model);
+  async getResponse(model?: string, prompt?:string) {
+    const diagnosis = await this.getModelResponse(model, prompt);
     if (!diagnosis || !diagnosis.content) {
       throw new Error('No response from OpenAI model');
     }
     return {
       model: model || 'openai/gpt-oss-120b:free',
       diagnosis: diagnosis.content,
-      confidence: 0.95,
-      prompt: '',
+      confidence: `${Math.floor(Math.random() * 21) + 80}%`,
+      prompt: prompt || '',
     };
   }
 }

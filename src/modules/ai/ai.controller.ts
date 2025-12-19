@@ -6,7 +6,7 @@ export class AiController {
   constructor(private readonly aiService: AiService) {}
 
   @Post('AI-response')
-  async getAIResponse(@Body('model') model?: string, promt?: string) {
-    return this.aiService.getResponse(model);
+  async getAIResponse(@Body('model') model?: string, @Body('prompt') prompt?: string) {
+    return this.aiService.getResponse(model, prompt);
   }
 }
