@@ -44,10 +44,11 @@ export class AuthController {
     const token = await this.authService.generateJwtToken(payload);
     res.cookie('jwt', token, {
       httpOnly: true,
-      secure: this.configService.get('NODE_ENV') === 'production',
+      secure: this.configService.get('COOKIE_MODE') === 'production',
       sameSite:
-        this.configService.get('NODE_ENV') === 'production' ? 'none' : 'lax',
+        this.configService.get('COOKIE_MODE') === 'production' ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      domain: this.configService.get<string>('COOKIE_DOMAIN') ? this.configService.get<string>('COOKIE_DOMAIN') : undefined,
     });
     return res.redirect(
       `${this.configService.get<string>('FRONTEND_URL')!}/google/success`,
