@@ -63,6 +63,19 @@ export class AuthController {
     );
   }
 
+  async logout(@Res() res: Response) {
+    res.clearCookie('jwt', {
+      httpOnly: true,
+      secure: this.configService.get('COOKIE_MODE') === 'production',
+      sameSite:
+        this.configService.get('COOKIE_MODE') === 'production' ? 'none' : 'lax',
+      domain:
+        this.configService.get<string>('COOKIE_DOMAIN')?.trim() ||
+        '.medical.system27.lat',
+    });
+    return res.send({ message: 'Logged out successfully' });
+  }
+
   @Get('me')
   @UseGuards(JwtGuard)
   async me(@Req() req) {
