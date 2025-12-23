@@ -63,6 +63,8 @@ export class AuthController {
     );
   }
 
+  @Post('logout')
+  @UseGuards(JwtGuard)
   async logout(@Res() res: Response) {
     res.clearCookie('jwt', {
       httpOnly: true,
