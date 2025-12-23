@@ -42,6 +42,12 @@ export class AuthController {
     const user = req.user;
     const payload = { sub: user.id, email: user.email };
     const token = await this.authService.generateJwtToken(payload);
+    
+    const domainName = this.configService.get<string>('COOKIE_DOMAIN');
+    console.log('--- DEBUG COOKIE DOMAIN ---');
+    console.log(`Valor: "${domainName}"`);
+    console.log(`Tipo: ${typeof domainName}`);
+
     res.cookie('jwt', token, {
       httpOnly: true,
       secure: this.configService.get('COOKIE_MODE') === 'production',
