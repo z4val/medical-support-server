@@ -48,7 +48,9 @@ export class AuthController {
       sameSite:
         this.configService.get('COOKIE_MODE') === 'production' ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      domain: this.configService.get<string>('COOKIE_DOMAIN') ? this.configService.get<string>('COOKIE_DOMAIN') : undefined,
+      domain:
+        this.configService.get<string>('COOKIE_DOMAIN')?.trim() ||
+        '.medical.system27.lat',
     });
     return res.redirect(
       `${this.configService.get<string>('FRONTEND_URL')!}/google/success`,
