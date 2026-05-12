@@ -35,7 +35,7 @@ export class AiService {
   async getResponse(model?: string, prompt?:string) {
     const diagnosis = await this.getModelResponse(model, prompt);
     if (!diagnosis || !diagnosis.content) {
-      throw new Error('No response from OpenAI model');
+      throw new Error(`No response from ${model || 'openai/gpt-oss-120b:free'} model`);
     }
     return {
       model: model || 'openai/gpt-oss-120b:free',
