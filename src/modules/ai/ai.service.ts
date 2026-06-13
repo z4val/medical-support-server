@@ -1,47 +1,68 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { OpenRouter } from '@openrouter/sdk';
-import { AssistantMessage } from '@openrouter/sdk/models';
+import { ConfigService } from '@nestjs/config';
+import { AI_CHAT_ADAPTER } from './adapters/ai-adapter.provider';
+import type { AiChatAdapter } from './adapters/ai-chat.adapter';
+
+const DEFAULT_USER_PROMPT =
+  'Genera un ejemplo de diagnóstico médico general asistido para un médico real que está atendiendo a un paciente con posible TCA. Evita generar formatos de tablas o gráficos, limítate a texto plano de máximo 200 palabras.';
 
 @Injectable()
 export class AiService {
-  constructor(@Inject('OPENROUTER_PROVIDER') private client: OpenRouter) {}
+  private readonly systemPrompt =
+    'Eres un asistente médico de apoyo especializado en Trastornos de la Conducta Alimentaria (TCA). ' +
+    'Proporciona diagnósticos preliminares claros en texto plano, sin tablas, gráficos ni markdown.';
 
-  //Test the client by sending a simple chat completion request
+  constructor(
+    @Inject(AI_CHAT_ADAPTER) private readonly adapter: AiChatAdapter,
+    private readonly config: ConfigService,
+  ) {}
+
+  private isBedrock(): boolean {
+    return this.config.get<string>('AI_PROVIDER', 'openrouter') === 'bedrock';
+  }
+
+  private resolveModel(requested?: string): string {
+    const primary = this.config.getOrThrow<string>(
+      this.isBedrock() ? 'AI_MODEL' : 'OPENROUTER_MODEL',
+    );
+    const secondary = this.config.getOrThrow<string>(
+      this.isBedrock() ? 'AI_MODEL_SECOND' : 'OPENROUTER_MODEL_SECOND',
+    );
+
+    if (!requested) return primary;
+    if (requested === primary || requested === secondary) return requested;
+    if (requested.includes('gpt-oss') || requested.includes('gpt-4')) {
+      return primary;
+    }
+    if (requested.includes('deepseek')) return secondary;
+    return requested;
+  }
+
   private async getModelResponse(
     model?: string,
     prompt?: string,
-  ): Promise<AssistantMessage | null> {
-    const response = await this.client.chat.send({
-      model: model || 'openai/gpt-oss-120b:free',
-      messages: [
-        {
-          role: 'user',
-          content:
-            prompt ||
-            'Genera un ejemplo de diagnóstico médico general asistido para un médico real que está atendiendo a un paciente con posible TCA. Evita generar formatos de tablas o gráficos, limítate a texto plano de máximo 200 palabras.',
-        },
-      ],
-    });
-
-    if (!response.choices || response.choices.length === 0) {
-      return null;
-    }
-
-    return response.choices[0].message;
+  ): Promise<string | null> {
+    return this.adapter.completeChat(this.resolveModel(model), [
+      { role: 'system', content: this.systemPrompt },
+      { role: 'user', content: prompt ?? DEFAULT_USER_PROMPT },
+    ]);
   }
 
   async generateMedicalPrompt() {}
 
-  async getResponse(model?: string, prompt?:string) {
+  async getResponse(model?: string, prompt?: string) {
+    const resolvedModel = this.resolveModel(model);
     const diagnosis = await this.getModelResponse(model, prompt);
-    if (!diagnosis || !diagnosis.content) {
-      throw new Error(`No response from ${model || 'openai/gpt-oss-120b:free'} model`);
+
+    if (!diagnosis) {
+      throw new Error(`No response from ${resolvedModel} model`);
     }
+
     return {
-      model: model || 'openai/gpt-oss-120b:free',
-      diagnosis: diagnosis.content,
+      model: resolvedModel,
+      diagnosis,
       confidence: Math.floor(Math.random() * 21) + 80,
-      prompt: prompt || '',
+      prompt: prompt ?? '',
     };
   }
 }

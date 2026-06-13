@@ -23,7 +23,7 @@ Este repositorio contiene el backend para la aplicación de **Soporte Médico co
 
 ## 🚀 Descripción General
 
-El servidor `medical-support-server` actúa como el núcleo de la lógica de negocio, gestionando la persistencia de datos en PostgreSQL y exponiendo endpoints seguros para el frontend. Integra servicios de IA a través de OpenRouter para asistir en el análisis médico y soporte a la toma de decisiones.
+El servidor `medical-support-server` actúa como el núcleo de la lógica de negocio, gestionando la persistencia de datos en PostgreSQL y exponiendo endpoints seguros para el frontend. Integra servicios de IA a través de OpenRouter o Amazon Bedrock (patrón adapter) para asistir en el análisis médico y soporte a la toma de decisiones.
 
 ## 🛠 Tecnologías Utilizadas
 
@@ -32,7 +32,7 @@ El servidor `medical-support-server` actúa como el núcleo de la lógica de neg
 - **Base de Datos**: PostgreSQL
 - **ORM**: TypeORM
 - **Autenticación**: Passport, JWT, Google OAuth2
-- **IA**: OpenRouter SDK
+- **IA**: OpenRouter SDK + OpenAI SDK (Bedrock)
 - **Testing**: Jest
 
 ## 🏗 Arquitectura
@@ -41,7 +41,7 @@ El proyecto sigue una arquitectura modular basada en los principios de NestJS, o
 
 - **Domain**: Módulos centrales del dominio de negocio (User, Patient, Indicators).
 - **Modules**: Módulos de características y soporte (Auth, AI, Dashboard, Inquiries).
-- **Infra**: Configuración de infraestructura y proveedores externos (Database, OpenRouter).
+- **Infra**: Configuración de infraestructura y proveedores externos (Database, OpenRouter, Bedrock).
 
 ## 📋 Requisitos Previos
 
@@ -90,8 +90,19 @@ COOKIE_MODE=development # o production
 COOKIE_DOMAIN=localhost
 FRONTEND_URL=http://localhost:5173
 
-# IA (OpenRouter)
+# IA — proveedor activo: openrouter | bedrock
+AI_PROVIDER=bedrock
+
+# OpenRouter
 OPENROUTER_API_KEY=tu_api_key_openrouter
+OPENROUTER_MODEL=openai/gpt-4o-mini
+OPENROUTER_MODEL_SECOND=deepseek/deepseek-v4-flash
+
+# Amazon Bedrock
+AI_BASE_URL=https://bedrock-mantle.us-east-1.api.aws/v1
+AI_API_KEY=tu_api_key_bedrock
+AI_MODEL=openai.gpt-oss-120b-1:0
+AI_MODEL_SECOND=deepseek.r1-1:0
 ```
 
 ## ▶️ Ejecución
@@ -196,7 +207,8 @@ src/
 │   └── user/               # Gestión de usuarios
 ├── infra/                  # Infraestructura
 │   ├── database.config.ts  # Configuración de BD
-│   └── openRouter.provider.ts # Proveedor de IA
+│   ├── openRouter.provider.ts # Cliente OpenRouter
+│   └── bedrock.provider.ts    # Cliente Bedrock (OpenAI SDK)
 └── modules/                # Módulos de características
     ├── ai/                 # Controlador y servicio de IA
     ├── auth/               # Autenticación (JWT, Google)
